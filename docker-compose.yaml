@@ -1,0 +1,35 @@
+version: '3'
+
+services:
+  rabbitmq:
+    image: rabbitmq:3.9-alpine
+    container_name: 'rabbitmq'
+    hostname: 'rabbitmq'
+    ports:
+      - 5672:5672
+      - 15672:15672
+  producer:
+    container_name: 'producer'
+    build: services/producer
+    restart: unless-stopped
+    volumes:
+      - ./services/producer:/usr/src/app
+    ports:
+      - 5001:5000
+    env_file:
+      - .env
+    depends_on:
+      - rabbitmq
+  consumer:
+    container_name: 'consumer'
+    build: services/consumer
+    restart: unless-stopped
+    volumes:
+      - ./services/consumer:/usr/src/app
+    ports:
+      - 5002:5000
+    env_file:
+      - .env
+    depends_on:
+      - rabbitmq
+      - producer
