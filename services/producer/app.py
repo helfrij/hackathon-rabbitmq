@@ -1,4 +1,5 @@
 import time
+import json
 import pika
 import logging
 from config import RABBITMQ_HOST, RABBITMQ_PORT, RABBITMQ_USER, RABBITMQ_PASSWORD
@@ -18,7 +19,7 @@ def main():
 
     while True:
         logging.info('Sending message')
-        message = 'Hello, world'.encode('utf-8')
+        message = json.dumps({'greeting': 'Hello, world'}).encode('utf-8')
         channel.basic_publish(exchange='', routing_key='test', body=message)
         time.sleep(5)
 
